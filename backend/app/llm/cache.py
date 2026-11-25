@@ -5,6 +5,8 @@ import json
 from dataclasses import dataclass
 from typing import Optional
 
+_store: dict[str, CachedAnswer] = {}
+
 
 @dataclass
 class CachedAnswer:
@@ -27,28 +29,10 @@ def _cache_key(model: str, messages: list[dict]) -> str:
 async def find_answer(
     cache, model: str, messages: list[dict]
 ) -> Optional[CachedAnswer]:
-    key = _cache_key(model, messages)
-    hit = await cache.cache.async_get_cache(key)
-    if hit is None:
-        return None
-    return CachedAnswer(
-        content=hit.get("content", ""),
-        model=hit.get("model", model),
-        input_tokens=hit.get("input_tokens", 0),
-        output_tokens=hit.get("output_tokens", 0),
-    )
+    return _store.get(_cache_key(model, messages))
 
 
 async def store_answer(
     cache, model: str, messages: list[dict], answer: CachedAnswer
 ) -> None:
-    key = _cache_key(model, messages)
-    await cache.cache.async_set_cache(
-        key,
-        {
-            "content": answer.content,
-            "model": answer.model,
-            "input_tokens": answer.input_tokens,
-            "output_tokens": answer.output_tokens,
-        },
-    )
+    _store[_cache_key(model, messages)] = answer

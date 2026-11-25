@@ -127,6 +127,7 @@ async def stream_complete(
             model="primary",
             messages=messages,
             stream=True,
+            stream_options={"include_usage": True},
             cache={"no-cache": True, "no-store": True},
         )
     except Exception as exc:
