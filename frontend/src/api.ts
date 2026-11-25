@@ -1,7 +1,7 @@
 import type { ChatRequest, ChatResponse, HistoryResponse, StreamEvent } from "./types";
 import { ApiError } from "./types";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || "https://lyftrai-7igw.onrender.com").replace(/\/$/, "");
 
 async function handleResponse<T>(resp: Response): Promise<T> {
   if (resp.ok) {
