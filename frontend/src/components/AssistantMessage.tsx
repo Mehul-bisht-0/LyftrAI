@@ -1,4 +1,4 @@
-import { Zap, Radio, Clock, Layers, Key, GitBranch } from "lucide-react";
+import { Zap, Radio, Clock, Layers, Key, GitBranch, type LucideIcon } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { ReplyMetadata } from "../types";
@@ -15,7 +15,7 @@ function MetaChip({
   accent,
   testId,
 }: {
-  icon: React.ComponentType<{ size?: number; strokeWidth?: number }>;
+  icon: LucideIcon;
   value: string;
   accent?: boolean;
   testId: string;
