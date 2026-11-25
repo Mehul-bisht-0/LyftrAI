@@ -87,7 +87,7 @@ class ChatService:
                     )
                     await llm_cache.store_answer(
                         self.cache,
-                        answer.model,
+                        primary_model,
                         messages,
                         CachedAnswer(
                             content=answer.content,
@@ -221,7 +221,7 @@ class ChatService:
 
             await llm_cache.store_answer(
                 self.cache,
-                answer.model,
+                primary_model,
                 messages,
                 CachedAnswer(
                     content=full_content,
