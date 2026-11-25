@@ -32,7 +32,7 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     groq_api_key: str = ""
 
-    database_url: str = "sqlite:///./data/app.db"
+    database_url: str = "sqlite:////data/app.db"
     allowed_origins: str = "http://localhost:3000"
     enable_failure_simulation: bool = False
 
