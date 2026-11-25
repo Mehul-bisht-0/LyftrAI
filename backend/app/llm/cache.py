@@ -28,7 +28,7 @@ async def find_answer(
     cache, model: str, messages: list[dict]
 ) -> Optional[CachedAnswer]:
     key = _cache_key(model, messages)
-    hit = await cache.async_get_cache(cache_key=key, messages=messages)
+    hit = await cache.cache.async_get_cache(key)
     if hit is None:
         return None
     return CachedAnswer(
@@ -43,13 +43,12 @@ async def store_answer(
     cache, model: str, messages: list[dict], answer: CachedAnswer
 ) -> None:
     key = _cache_key(model, messages)
-    await cache.async_add_cache(
+    await cache.cache.async_set_cache(
+        key,
         {
             "content": answer.content,
             "model": answer.model,
             "input_tokens": answer.input_tokens,
             "output_tokens": answer.output_tokens,
         },
-        cache_key=key,
-        messages=messages,
     )

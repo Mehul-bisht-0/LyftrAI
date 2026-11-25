@@ -47,6 +47,12 @@ export type StreamEvent =
   | { t: "done";     m: ReplyMetadata }
   | { t: "error";    d: string };
 
+export interface SessionMeta {
+  id: string;
+  title: string;
+  createdAt: number;
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,
