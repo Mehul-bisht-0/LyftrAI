@@ -4,14 +4,14 @@ const KEY = "relay_sessions";
 
 export function loadSessions(): SessionMeta[] {
   try {
-    return JSON.parse(localStorage.getItem(KEY) ?? "[]");
+    return JSON.parse(sessionStorage.getItem(KEY) ?? "[]");
   } catch {
     return [];
   }
 }
 
 export function saveSessions(sessions: SessionMeta[]): void {
-  localStorage.setItem(KEY, JSON.stringify(sessions));
+  sessionStorage.setItem(KEY, JSON.stringify(sessions));
 }
 
 export function upsertSession(sessions: SessionMeta[], meta: SessionMeta): SessionMeta[] {
