@@ -127,7 +127,6 @@ async def stream_complete(
             model="primary",
             messages=messages,
             stream=True,
-            stream_options={"include_usage": True},
             cache={"no-cache": True, "no-store": True},
         )
     except Exception as exc:
@@ -139,10 +138,14 @@ async def stream_complete(
     output_tokens = 0
 
     async for chunk in response:
+        # Usage may arrive in a choices-less final chunk (OpenAI/Groq)
+        # or in the last chunk alongside choices (Gemini via LiteLLM)
+        usage = getattr(chunk, "usage", None)
+        if usage:
+            input_tokens = getattr(usage, "prompt_tokens", 0) or input_tokens
+            output_tokens = getattr(usage, "completion_tokens", 0) or output_tokens
+
         if not chunk.choices:
-            if hasattr(chunk, "usage") and chunk.usage:
-                input_tokens = getattr(chunk.usage, "prompt_tokens", 0) or 0
-                output_tokens = getattr(chunk.usage, "completion_tokens", 0) or 0
             continue
 
         delta = getattr(chunk.choices[0].delta, "content", "") or ""
@@ -153,12 +156,24 @@ async def stream_complete(
         if model_used is None:
             model_used = getattr(chunk, "model", None) or None
 
-        if hasattr(chunk, "usage") and chunk.usage:
-            input_tokens = getattr(chunk.usage, "prompt_tokens", 0) or 0
-            output_tokens = getattr(chunk.usage, "completion_tokens", 0) or 0
-
     actual_model = model_used or specs[0].model
     spec_index = _model_to_spec_index(actual_model, specs)
+
+    # Gemini streaming doesn't return usage — estimate via token counter
+    if input_tokens == 0:
+        try:
+            input_tokens = litellm.token_counter(model=actual_model, messages=messages)
+        except Exception:
+            pass
+    if output_tokens == 0 and full_content:
+        try:
+            output_tokens = litellm.token_counter(
+                model=actual_model,
+                messages=[{"role": "assistant", "content": full_content}],
+            )
+        except Exception:
+            pass
+
     yield ResolvedAnswer(
         content=full_content,
         model=actual_model,
