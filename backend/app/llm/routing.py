@@ -137,24 +137,27 @@ async def stream_complete(
     input_tokens = 0
     output_tokens = 0
 
-    async for chunk in response:
-        # Usage may arrive in a choices-less final chunk (OpenAI/Groq)
-        # or in the last chunk alongside choices (Gemini via LiteLLM)
-        usage = getattr(chunk, "usage", None)
-        if usage:
-            input_tokens = getattr(usage, "prompt_tokens", 0) or input_tokens
-            output_tokens = getattr(usage, "completion_tokens", 0) or output_tokens
+    try:
+        async for chunk in response:
+            # Usage may arrive in a choices-less final chunk (OpenAI/Groq)
+            # or in the last chunk alongside choices (Gemini via LiteLLM)
+            usage = getattr(chunk, "usage", None)
+            if usage:
+                input_tokens = getattr(usage, "prompt_tokens", 0) or input_tokens
+                output_tokens = getattr(usage, "completion_tokens", 0) or output_tokens
 
-        if not chunk.choices:
-            continue
+            if not chunk.choices:
+                continue
 
-        delta = getattr(chunk.choices[0].delta, "content", "") or ""
-        if delta:
-            full_content += delta
-            yield delta
+            delta = getattr(chunk.choices[0].delta, "content", "") or ""
+            if delta:
+                full_content += delta
+                yield delta
 
-        if model_used is None:
-            model_used = getattr(chunk, "model", None) or None
+            if model_used is None:
+                model_used = getattr(chunk, "model", None) or None
+    except Exception as exc:
+        raise AllProvidersUnavailableError(f"Stream failed: {exc}") from exc
 
     actual_model = model_used or specs[0].model
     spec_index = _model_to_spec_index(actual_model, specs)
