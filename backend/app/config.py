@@ -61,7 +61,7 @@ class Settings(BaseSettings):
         return [
             DeploymentSpec(
                 key_id="key_1",
-                model="gemini/gemini-2.0-flash-lite",
+                model="gemini/gemini-3.5-flash-lite",
                 routing_group="primary",
                 secret=gemini_key,
             ),
