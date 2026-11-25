@@ -2,7 +2,6 @@
 
 Fault-tolerant, multi-provider LLM chatbot — Lyftr AI Full-Stack Engineering Assignment.
 
-[![CI](https://github.com/mehulbisht/relay-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/mehulbisht/relay-ai/actions/workflows/ci.yml)
 
 ---
 
@@ -10,14 +9,14 @@ Fault-tolerant, multi-provider LLM chatbot — Lyftr AI Full-Stack Engineering A
 
 | Service  | URL |
 |----------|-----|
-| Frontend | `https://<your-vercel-url>` |
-| Backend  | `https://<your-railway-url>` |
+| Frontend | `https://lyftr-ai-mu.vercel.app/` |
+| Backend  | `https://lyftrai-7igw.onrender.com/` |
 
 Both are public, require no login, and are connected to each other.
 
 Quick sanity check:
 ```bash
-curl https://<your-railway-url>/health
+curl https://lyftrai-7igw.onrender.com/health
 # {"status":"ok","keys_configured":2,"cache_enabled":true}
 ```
 
